@@ -31,7 +31,7 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String TAG = getLocalClassName();
+    private static final String TAG = "MainActivity";
 
     private TextView mWeatherTextView;
 
