@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements
      * Protip: Hold Command on Mac or Control on Windows and click that link to automagically
      * open the Common Intents page
      */
-    private void openLocationInMap() {  
+    private void openLocationInMap() {
         String addressString = SunshinePreferences.getPreferredWeatherLocation(this);
         Uri geoLocation = Uri.parse("geo:0,0?q=" + addressString);
 
