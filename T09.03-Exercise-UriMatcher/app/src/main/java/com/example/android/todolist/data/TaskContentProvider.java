@@ -29,7 +29,7 @@ public class TaskContentProvider extends ContentProvider {
 
     public static final int TASKS = 100;
     public static final int TASK_WITH_ID = 101;
-    
+
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     public static UriMatcher buildUriMatcher() {
