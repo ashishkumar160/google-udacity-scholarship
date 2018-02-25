@@ -120,13 +120,18 @@ public class TaskContentProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
 
+        // Get access to underlying database (read-only for query)
         final SQLiteDatabase db = mTaskDbHelper.getReadableDatabase();
+
+        // Write URI match code and set a variable to return a Cursor
         int match = sUriMatcher.match(uri);
         Cursor retCursor;
 
+        // Query for the tasks directory and write a default case
         switch (match) {
+            // Query for the tasks directory
             case TASKS:
-                retCursor = db.query(TABLE_NAME,
+                retCursor =  db.query(TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -134,30 +139,43 @@ public class TaskContentProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
-            case TASK_WITH_ID:
-                String id = uri.getPathSegments().get(1);
-                String mSelection = "_id=?";
-                String[] mSelectionArgs = new String[]{id};
-                retCursor = db.query(TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
-                break;
+            // Default exception
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+
+        // Set a notification URI on the Cursor and return that Cursor
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+        // Return the desired Cursor
         return retCursor;
     }
 
 
+    // Implement delete to delete a single row of data
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
 
-        throw new UnsupportedOperationException("Not yet implemented");
+        SQLiteDatabase db = mTaskDbHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+
+        int itemsDeleted;
+
+        switch (match) {
+            case TASK_WITH_ID:
+                String id = uri.getPathSegments().get(1);
+                itemsDeleted = db.delete(TABLE_NAME,
+                        "_id=?",
+                        new String[]{id});
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown Uri : " + uri);
+        }
+
+        if (itemsDeleted!=0)
+            getContext().getContentResolver().notifyChange(uri, null);
+
+        return itemsDeleted;
     }
 
 
